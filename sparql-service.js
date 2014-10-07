@@ -112,8 +112,9 @@ angular.module('app').factory('sparql', function($http) {
 
   // query() using endpoint and prefixes of Service instance
   sparql.Service.prototype.query = function() {
+    this.queryString = _.flatten(arguments).join('\n');
     return sparql.query(this.endpoint, sparql.prefix(this.prefixes),
-                        arguments);
+                        this.queryString);
   };
   // generate a SELECT query string from arguments and call query()
   sparql.Service.prototype.querySelect = function(vars) {
