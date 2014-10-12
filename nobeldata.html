@@ -2,117 +2,168 @@
 <html lang="en" ng-app="app">
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Querying Nobel Prize Linked Data</title>
+  <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="bower_components/angular/angular.min.js"></script>
   <script src="bower_components/lodash/dist/lodash.min.js"></script>
   <script src="app.js"></script>
   <script src="sparql-service.js"></script>
 </head>
 <body>
-  <h1>Query for Nobel laureates</h1>
+<div class="container">
+  <h2>Query Nobel prize winners</h2>
   <p>This web app allows you to query the <a href="http://www.nobelprize.org/nobel_organizations/nobelmedia/nobelprize_org/developer/manual-linkeddata/terms.html">
     Nobel Prize Linked Data dataset</a>. Choose among the criteria and options below to generate a SPARQL query.
   </p>
 
-  <div class="example-questions" ng-controller="ExampleQuestionsCtrl">
-    <a href="" ng-click="toggle()">Example questions</a>
-    <ul ng-show="expanded">
-      <li><a href="#?gender=female&amp;shared=yes&amp;aggregate=COUNT">
-        How many female Nobel laureates had to share it with someone else?</a>
-        <ul>
-          <li><a href="#?groupBy=gender&amp;aggregate=AVG&amp;shareQuota">
-            Is the quota of people sharing higher or lower than for males?</a>
-        </ul>
-      <li><a href="#?countryOfBirth&amp;countryOfAffiliation&amp;aggregate=COUNT">
-        How many Nobel laureates were affiliated with a university in the same country as they were born?</a>
-      <li><a href="#?groupBy=laureate&amp;multipleAwards">
-        Which Nobel laureates have won the prize more than once?</a>
-      <li><a href="#?aggregate=AVG&amp;age">
-        What is the average age when winning the Nobel prize?</a>
-        <ul>
-          <li><a href="#?aggregate=AVG&amp;age&amp;groupBy=category">
-            Does it vary between categories?</a>
-          <li><a href="#?aggregate=AVG&amp;age&amp;groupBy=gender">
-            Between gender?</a>
-        </ul>
-    </ul>
-  </div>
-
-  <form ng-controller="QueryFormCtrl">
-    <ul>
-      <li>
-        <label>Gender:
-          <select ng-model="q.gender" ng-options="value for value in ['male', 'female']">
+  <form class="form-horizontal" ng-controller="QueryFormCtrl">
+    <ul class="list-unstyled">
+      <li class="form-group">
+        <label class="col-sm-3 control-label" for="selectGender">
+          Gender
+        </label>
+        <div class="col-sm-3">
+          <select class="form-control" id="selectGender" ng-model="q.gender"
+            ng-options="value for value in ['male', 'female']">
             <option value="">-</option>
           </select>
+        </div>
+      <li class="form-group">
+        <label class="col-sm-3 control-label">
+          Prize category
         </label>
-      <li>
-        Prize category:
-        <label ng-repeat="name in categories">
+        <div class="col-sm-9">
+        <label class="checkbox-inline" ng-repeat="name in categories">
           <input type="checkbox" ng-model="q.category[name]"> {{name}}
         </label>
-      <li>
-        <label>Shared:
-          <select ng-model="q.shared" ng-options="value for value in ['yes', 'no']">
+        </div>
+      <li class="form-group">
+        <label class="col-sm-3 control-label" for="selectShared">
+          Shared
+        </label>
+        <div class="col-sm-3">
+          <select class="form-control" id="selectShared" ng-model="q.shared"
+            ng-options="value for value in ['yes', 'no']">
             <option value="">-</option>
           </select>
+        </div>
+      <li class="form-group">
+        <label class="col-sm-3 control-label" for="selectStillAlive">
+          Still alive
         </label>
-      <li>
-        <label>Still alive:
-          <select ng-model="q.stillAlive" ng-options="value for value in ['yes', 'no']">
+        <div class="col-sm-3">
+          <select class="form-control" id="selectStillAlive" ng-model="q.stillAlive"
+            ng-options="value for value in ['yes', 'no']">
             <option value="">-</option>
           </select>
+        </div>
+      <li class="form-group">
+        <label class="col-sm-3 control-label">
+          Country
         </label>
-      <li>
-        Country:
-        <label>
+        <div class="col-sm-9">
+        <label class="checkbox-inline">
           <input type="checkbox" ng-model="q.countryOfBirth"> of birth
         </label>
-        <label>
+        <label class="checkbox-inline">
           <input type="checkbox" ng-model="q.countryOfAffiliation"> of affiliation (university)
         </label>
-      <li>
-        <label>Aggregate:
-          <select ng-model="q.aggregate">
+        </div>
+      <li class="form-group">
+        <label class="col-sm-3 control-label" for="selectAggregate">
+          Aggregate
+        </label>
+        <div class="col-sm-3">
+          <select class="form-control" id="selectAggregate" ng-model="q.aggregate">
             <option value="">-</option>
             <option value="COUNT">count</option>
             <option value="AVG">average</option>
             <option value="MIN">min</option>
             <option value="MAX">max</option>
           </select>
-        </label>
-        <label>
+        </div>
+        <div class="col-sm-6">
+        <label class="checkbox-inline">
           <input type="checkbox" ng-model="q.shareQuota" ng-disabled="q.aggregate === 'COUNT'">
           share quota
         </label>
-        <label>
+        <label class="checkbox-inline">
           <input type="checkbox" ng-model="q.age" ng-disabled="q.aggregate === 'COUNT'">
           age (at the year of the award)
         </label>
-      <li>
-        <label>Group by:
-          <select ng-model="q.groupBy" ng-options="value for value in groups">
+        </div>
+      <li class="form-group">
+        <label class="col-sm-3 control-label" for="selectGroupBy">
+          Group by
+        </label>
+        <div class="col-sm-3">
+          <select class="form-control" id="selectGroupBy" ng-model="q.groupBy"
+            ng-options="value for value in groups">
             <option value="">-</option>
           </select>
-        </label>
-        <label>
+        </div>
+        <div class="col-sm-6">
+        <label class="checkbox-inline">
           <input type="checkbox" ng-model="q.multipleAwards"> have won the prize more than once
         </label>
+        </div>
     </ul>
-        
-    <button type="submit" ng-click="submitQuery()">Submit</button>
-    <button ng-click="resetQuery()">Reset</button>
+    <div class="form-group">
+      <div class="col-sm-offset-3 col-sm-9">
+        <button class="btn btn-primary" type="submit" ng-click="submitQuery()">Submit</button>
+        &nbsp;
+        <button class="btn btn-default" ng-click="resetQuery()">Reset</button>
+      </div>
+    </div>
   </form>
 
-  <div ng-controller="QueryResultsCtrl">
-    <form action="http://data.nobelprize.org/snorql/">
-      <textarea ng-model="queryString" name="query">
-      </textarea>
-      <button type="submit">Edit SPARQL query</button>
-    </form>
-    <pre>{{errorMessage}}</pre>
+  <div ng-controller="CollapseCtrl">
+    <button class="btn btn-link" ng-click="toggle()">
+      Example questions <span class="caret"></span>
+    </button>
+    <ul class="list-group" ng-show="expanded">
+      <li class="list-group-item">
+        <a href="#?gender=female&amp;shared=yes&amp;aggregate=COUNT">
+          How many female Nobel laureates had to share it with someone else?</a>
+        <a href="#?groupBy=gender&amp;aggregate=AVG&amp;shareQuota">
+          Is the quota of people sharing higher or lower than for males?</a>
+      <li class="list-group-item">
+        <a href="#?countryOfBirth&amp;countryOfAffiliation&amp;aggregate=COUNT">
+          How many Nobel laureates were affiliated with a university in the same country as they were born?</a>
+      <li class="list-group-item">
+        <a href="#?groupBy=laureate&amp;multipleAwards">
+          Which Nobel laureates have won the prize more than once?</a>
+      <li class="list-group-item">
+        <a href="#?aggregate=AVG&amp;age">
+          What is the average age when winning the Nobel prize?</a>
+        <a href="#?aggregate=AVG&amp;age&amp;groupBy=category">
+          Does it vary between categories?</a>
+        <a href="#?aggregate=AVG&amp;age&amp;groupBy=gender">
+          Between gender?</a>
+    </ul>
+  </div>
 
-    <table>
+  <div ng-controller="QueryResultsCtrl">
+    <div ng-controller="CollapseCtrl">
+      <button class="btn btn-link" ng-click="toggle()">
+        SPARQL query <span class="caret"></span>
+      </button>
+      <form action="http://data.nobelprize.org/snorql/" ng-show="expanded">
+        <div class="form-group">
+          <textarea class="form-control" rows="7" ng-model="queryString" name="query">
+          </textarea>
+        </div>
+        <button class="btn btn-primary" type="submit">Edit SPARQL query</button>
+      </form>
+    </div>
+
+    <h3>Results <small ng-if="busy">Loading. Please wait...</small>
+    </h3>
+    <pre ng-if="errorMessage">{{errorMessage}}</pre>
+
+    <table class="table">
       <tr>
         <th ng-repeat="varName in vars">{{varName}}</th>
       </tr>
@@ -125,5 +176,6 @@
       </tr>
     </table>
   </div>
+</div>
 </body>
 </html>

@@ -89,7 +89,7 @@ angular.module('app', [])
 
 /* Controllers */
 
-.controller('ExampleQuestionsCtrl', function($scope) {
+.controller('CollapseCtrl', function($scope) {
   $scope.toggle = function() {
     $scope.expanded = !$scope.expanded;
   }
@@ -255,10 +255,16 @@ angular.module('app', [])
     .success(function(data) {
       $scope.vars = _.without(data.head.vars, 'awardLabel');
       $scope.bindings = data.results.bindings;
+      $scope.errorMessage = '';
+      $scope.busy = false;
     })
     .error(function(data) {
+      $scope.vars = [];
+      $scope.bindings = [];
       $scope.errorMessage = data;
+      $scope.busy = false;
     });
+    $scope.busy = true;
     $scope.queryString = nobel.queryString;
   });
 })
@@ -280,4 +286,4 @@ angular.module('app', [])
     if (prefix) return uri.substring(prefix.length);
     return uri;
   };
-})
+});
