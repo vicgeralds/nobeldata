@@ -1,8 +1,7 @@
 <!doctype html>
-<html lang="en" ng-app="app">
+<html lang="en" data-ng-app="app">
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Querying Nobel Prize Linked Data</title>
   <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -10,23 +9,28 @@
   <script src="bower_components/lodash/dist/lodash.min.js"></script>
   <script src="app.js"></script>
   <script src="sparql-service.js"></script>
+  <style>
+   h2.btn { margin-top: 0 }
+  </style>
 </head>
 <body>
 <div class="container">
-  <h2>Query Nobel prize winners</h2>
+  <div class="page-header">
+  <h1 class="h2">Query Nobel prize winners</h1>
   <p>This web app allows you to query the <a href="http://www.nobelprize.org/nobel_organizations/nobelmedia/nobelprize_org/developer/manual-linkeddata/terms.html">
     Nobel Prize Linked Data dataset</a>. Choose among the criteria and options below to generate a SPARQL query.
   </p>
+  </div>
 
-  <form class="form-horizontal" ng-controller="QueryFormCtrl">
+  <form class="form-horizontal" data-ng-controller="QueryFormCtrl">
     <ul class="list-unstyled">
       <li class="form-group">
         <label class="col-sm-3 control-label" for="selectGender">
           Gender
         </label>
         <div class="col-sm-3">
-          <select class="form-control" id="selectGender" ng-model="q.gender"
-            ng-options="value for value in ['male', 'female']">
+          <select class="form-control" id="selectGender" data-ng-model="q.gender"
+            data-ng-options="value for value in ['male', 'female']">
             <option value="">-</option>
           </select>
         </div>
@@ -35,8 +39,8 @@
           Prize category
         </label>
         <div class="col-sm-9">
-        <label class="checkbox-inline" ng-repeat="name in categories">
-          <input type="checkbox" ng-model="q.category[name]"> {{name}}
+        <label class="checkbox-inline" data-ng-repeat="name in categories">
+          <input type="checkbox" data-ng-model="q.category[name]"> {{name}}
         </label>
         </div>
       <li class="form-group">
@@ -44,8 +48,8 @@
           Shared
         </label>
         <div class="col-sm-3">
-          <select class="form-control" id="selectShared" ng-model="q.shared"
-            ng-options="value for value in ['yes', 'no']">
+          <select class="form-control" id="selectShared" data-ng-model="q.shared"
+            data-ng-options="value for value in ['yes', 'no']">
             <option value="">-</option>
           </select>
         </div>
@@ -54,8 +58,8 @@
           Still alive
         </label>
         <div class="col-sm-3">
-          <select class="form-control" id="selectStillAlive" ng-model="q.stillAlive"
-            ng-options="value for value in ['yes', 'no']">
+          <select class="form-control" id="selectStillAlive" data-ng-model="q.stillAlive"
+            data-ng-options="value for value in ['yes', 'no']">
             <option value="">-</option>
           </select>
         </div>
@@ -65,10 +69,10 @@
         </label>
         <div class="col-sm-9">
         <label class="checkbox-inline">
-          <input type="checkbox" ng-model="q.countryOfBirth"> of birth
+          <input type="checkbox" data-ng-model="q.countryOfBirth"> of birth
         </label>
         <label class="checkbox-inline">
-          <input type="checkbox" ng-model="q.countryOfAffiliation"> of affiliation (university)
+          <input type="checkbox" data-ng-model="q.countryOfAffiliation"> of affiliation (university)
         </label>
         </div>
       <li class="form-group">
@@ -76,7 +80,7 @@
           Aggregate
         </label>
         <div class="col-sm-3">
-          <select class="form-control" id="selectAggregate" ng-model="q.aggregate">
+          <select class="form-control" id="selectAggregate" data-ng-model="q.aggregate">
             <option value="">-</option>
             <option value="COUNT">count</option>
             <option value="AVG">average</option>
@@ -86,11 +90,11 @@
         </div>
         <div class="col-sm-6">
         <label class="checkbox-inline">
-          <input type="checkbox" ng-model="q.shareQuota" ng-disabled="q.aggregate === 'COUNT'">
+          <input type="checkbox" data-ng-model="q.shareQuota" data-ng-disabled="q.aggregate === 'COUNT'">
           share quota
         </label>
         <label class="checkbox-inline">
-          <input type="checkbox" ng-model="q.age" ng-disabled="q.aggregate === 'COUNT'">
+          <input type="checkbox" data-ng-model="q.age" data-ng-disabled="q.aggregate === 'COUNT'">
           age (at the year of the award)
         </label>
         </div>
@@ -99,31 +103,31 @@
           Group by
         </label>
         <div class="col-sm-3">
-          <select class="form-control" id="selectGroupBy" ng-model="q.groupBy"
-            ng-options="value for value in groups">
+          <select class="form-control" id="selectGroupBy" data-ng-model="q.groupBy"
+            data-ng-options="value for value in groups">
             <option value="">-</option>
           </select>
         </div>
         <div class="col-sm-6">
         <label class="checkbox-inline">
-          <input type="checkbox" ng-model="q.multipleAwards"> have won the prize more than once
+          <input type="checkbox" data-ng-model="q.multipleAwards"> have won the prize more than once
         </label>
         </div>
     </ul>
     <div class="form-group">
       <div class="col-sm-offset-3 col-sm-9">
-        <button class="btn btn-primary" type="submit" ng-click="submitQuery()">Submit</button>
+        <button class="btn btn-primary" type="submit" data-ng-click="submitQuery()">Submit</button>
         &nbsp;
-        <button class="btn btn-default" ng-click="resetQuery()">Reset</button>
+        <button class="btn btn-default" data-ng-click="resetQuery()">Reset</button>
       </div>
     </div>
   </form>
 
-  <div ng-controller="CollapseCtrl">
-    <button class="btn btn-link" ng-click="toggle()">
+  <div data-ng-controller="CollapseCtrl">
+    <h2 class="btn btn-link" data-ng-class="{'pull-left': !expanded}" data-ng-click="toggle()">
       Example questions <span class="caret"></span>
-    </button>
-    <ul class="list-group" ng-show="expanded">
+    </h2>
+    <ul class="list-group" data-ng-show="expanded">
       <li class="list-group-item">
         <a href="#?gender=female&amp;shared=yes&amp;aggregate=COUNT">
           How many female Nobel laureates had to share it with someone else?</a>
@@ -145,33 +149,33 @@
     </ul>
   </div>
 
-  <div ng-controller="QueryResultsCtrl">
-    <div ng-controller="CollapseCtrl">
-      <button class="btn btn-link" ng-click="toggle()">
+  <div data-ng-controller="QueryResultsCtrl">
+    <div data-ng-controller="CollapseCtrl">
+      <h2 class="btn btn-link" data-ng-click="toggle()">
         SPARQL query <span class="caret"></span>
-      </button>
-      <form action="http://data.nobelprize.org/snorql/" ng-show="expanded">
+      </h2>
+      <form action="http://data.nobelprize.org/snorql/" data-ng-show="expanded">
         <div class="form-group">
-          <textarea class="form-control" rows="7" ng-model="queryString" name="query">
+          <textarea class="form-control" rows="7" data-ng-model="queryString" name="query">
           </textarea>
         </div>
         <button class="btn btn-primary" type="submit">Edit SPARQL query</button>
       </form>
     </div>
 
-    <h3>Results <small ng-if="busy">Loading. Please wait...</small>
-    </h3>
-    <pre ng-if="errorMessage">{{errorMessage}}</pre>
+    <h2 class="h3">Results <small data-ng-if="busy">Loading. Please wait...</small>
+    </h2>
+    <pre data-ng-if="errorMessage">{{errorMessage}}</pre>
 
     <table class="table">
       <tr>
-        <th ng-repeat="varName in vars">{{varName}}</th>
+        <th data-ng-repeat="varName in vars">{{varName}}</th>
       </tr>
-      <tr ng-repeat="binding in bindings">
-        <td ng-repeat="varName in vars" ng-switch="binding[varName].type">
-          <a ng-switch-when="uri" ng-href="{{binding[varName].value}}">{{binding|resourceLabel:varName}}</a>
-          <span ng-switch-when="typed-literal">{{binding[varName].value|number}}</span>
-          <span ng-switch-default="">{{binding[varName].value}}</span>
+      <tr data-ng-repeat="binding in bindings">
+        <td data-ng-repeat="varName in vars" data-ng-switch="binding[varName].type">
+          <a data-ng-switch-when="uri" data-ng-href="{{binding[varName].value}}">{{binding|resourceLabel:varName}}</a>
+          <span data-ng-switch-when="typed-literal">{{binding[varName].value|number}}</span>
+          <span data-ng-switch-default="">{{binding[varName].value}}</span>
         </td>
       </tr>
     </table>
