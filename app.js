@@ -250,6 +250,8 @@ angular.module('app', [])
     }
     if (_.contains(select, 'awardLabel'))
       solutionMod.push('ORDER BY ?awardLabel');
+    else if (_.last(select)[1] == 'awards')
+      solutionMod.push('ORDER BY DESC(?awards)');
 
     nobel.querySelect(select, where, solutionMod.join('\n'))
     .success(function(data) {
@@ -265,7 +267,7 @@ angular.module('app', [])
       $scope.busy = false;
     });
     $scope.busy = true;
-    $scope.queryString = nobel.queryString;
+    $scope.query = { queryString: nobel.queryString };
   });
 })
 
